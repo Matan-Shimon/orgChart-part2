@@ -13,6 +13,7 @@ private:
     Node* parent;
     vector<Node*> childs;
     string name = "";
+    int tag = 0;
 public:
     Node();
     Node(const string & name);

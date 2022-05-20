@@ -17,24 +17,9 @@ OrgChart& OrgChart::add_root(string head_manager){
 OrgChart& OrgChart::add_sub(string manager_name, string worker_name){
     bool found_manager = false;
     Node* manager_node = get_worker(manager_name);
-    bool worker_in_company = in_company(worker_name);
-    if (worker_in_company) {
-        throw invalid_argument(worker_name+" is already in the company");
-    }
     Node worker_node = Node(worker_name);
     manager_node->add_child(&worker_node);
     return *this;
-}
-
-bool OrgChart::in_company(string worker_name){
-    bool worker_found = false;
-    for (auto it = this->begin_level_order(); it != this->end_level_order(); ++it)
-    {
-        if (*it == worker_name) {
-            worker_found = true;
-        }
-    }
-    return worker_found;
 }
 
 Node* OrgChart::get_manager(string worker_name){

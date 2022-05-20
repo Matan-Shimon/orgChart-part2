@@ -7,6 +7,7 @@
 #include<iterator>
 #include<vector>
 #include "Node.hpp"
+#include "queue"
 
 using namespace std;
 
@@ -27,6 +28,7 @@ namespace ariel {
         class Iterator{
         private:
             Node* curr_node;
+            vector<Node*> order;
             char flag;
             int iter_size;
         public:
@@ -34,26 +36,37 @@ namespace ariel {
                 this->curr_node = ptr;
                 this->flag = flag;
                 this->iter_size = 0;
-            }
-            Node* get_curr_node() {
-                return this->curr_node;
-            }
-            Iterator& operator++(){
-                if (flag == 1) { // level order
+                if (flag == 'l') { // level order
                     level_order_increment();
                 }
                 else {
-                    if (flag == 2) { // reverse order
+                    if (flag == 'r') { // reverse order
                         reverse_order_increment();
                     }
                     else { // pre order
                         pre_order_increment();
                     }
                 }
-                return *this;
+            }
+            Node* get_curr_node() {
+                return this->curr_node;
+            }
+            Iterator& operator++(){
+
             }
             Iterator& level_order_increment(){
                 // BFS
+                queue<Node*> queue;
+                queue.push(this->curr_node);
+                while (!queue.empty()) {
+                    this->order.push_back(queue.front());
+                    vector<Node*> childs = queue.front()->get_childs();
+                    for (unsigned int i = 0; i < childs.size(); ++i) {
+                        queue.push(childs.at(i));
+                    }
+                    queue.pop();
+                }
+
             }
             Iterator& reverse_order_increment(){
                 // REVERSE BFS
