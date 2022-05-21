@@ -9,87 +9,113 @@ OrgChart::OrgChart(){
     this->root = new Node();
 }
 
-OrgChart& OrgChart::add_root(string head_manager){
-    this->root->set_name(head_manager);
+OrgChart::~OrgChart(){
+    Iterator iter = begin_level_order();
+    for (unsigned int i = 0; i < iter.get_order_by_levels().size(); ++i) {
+        for (unsigned int j = 0; j < iter.get_order_by_levels().at(iter.get_order_by_levels().size()-1-i).size(); ++j) {
+            delete iter.get_order_by_levels().at(iter.get_order_by_levels().size()-1-i).at(j);
+        }
+    }
+}
+
+OrgChart& OrgChart::add_root(string const & head_manager){
+    if (this->root != nullptr) {
+        this->root->set_name(head_manager);
+    }
+    else {
+        this->root = new Node(head_manager);
+    }
     return *this;
 }
 
-OrgChart& OrgChart::add_sub(string manager_name, string worker_name){
-    bool found_manager = false;
+OrgChart& OrgChart::add_sub(string const & manager_name, string const & worker_name){
     Node* manager_node = get_worker(manager_name);
-    Node worker_node = Node(worker_name);
-    manager_node->add_child(&worker_node);
+    Node* worker_node = new Node(worker_name);
+    manager_node->add_child(worker_node);
+    worker_node->set_parent(manager_node);
     return *this;
 }
 
-Node* OrgChart::get_manager(string worker_name){
+Node* OrgChart::get_manager(string const & worker_name) const{
     Node* worker_node = get_worker(worker_name);
     Node* manager_node = worker_node->get_parent();
-    if (manager_node->get_name() == "") {
+    if (manager_node == nullptr) {
         throw invalid_argument(worker_name+" has no manager above");
     }
     return manager_node;
 }
 
-Node* OrgChart::get_worker(string worker_name) {
-    Node* worker_node;
-    for (auto it = this->begin_level_order(); it != this->end_level_order(); ++it)
+Node* OrgChart::get_worker(string const & worker_name) const{
+    for (auto it = this->begin_level_order(); it != end_level_order(); ++it)
     {
         if (*it == worker_name) {
-            worker_node = it.get_curr_node();
+            Node* worker_node = it.get_curr_node();
+            return worker_node;
         }
     }
-    if (worker_node->get_name() == "") {
-        throw invalid_argument(worker_name+" is not working at the company");
-    }
-    return worker_node;
+    throw invalid_argument(worker_name+" is not working at the company");
 }
 
 Node* OrgChart::get_root(){
     return this->root;
 }
 
-ostream & ariel::operator<< (ostream& output, const OrgChart& orgChart){
-
-//    for (auto it = orgChart.begin_level_order(); it != this->end_level_order(); ++it) {
-//
-//    }
+ostream & ariel::operator<< (ostream& output, const OrgChart& orgChart) {
+    OrgChart::Iterator level_order(orgChart.root, OrgChart::Iterator::flags::by_level_order);
+    for (unsigned int i = 0; i < level_order.get_order_by_levels().size(); ++i) {
+        output << "Level "+ to_string(i+1)+": ";
+        output << "\n";
+        for (unsigned int j = 0; j < level_order.get_order_by_levels().at(i).size(); ++j) {
+            output << "Worker name: "+level_order.get_order_by_levels().at(i).at(j)->get_name();
+            output << ", boss: "+level_order.get_order_by_levels().at(i).at(j)->get_parent_name();
+            output << ", subordinates: ";
+            vector<Node*> childs = level_order.get_order_by_levels().at(i).at(j)->get_childs();
+            for (unsigned int k = 0; k < childs.size(); ++k) {
+                output << childs.at(k)->get_name();
+                if (k != childs.size()-1) {
+                    output << ", ";
+                }
+            }
+            output << "\n";
+        }
+        output << "\n";
+    }
     return output;
 }
 
 OrgChart::Iterator OrgChart::begin_level_order() const{
-    OrgChart::Iterator check(this->root, 'l');
-    return check;
+    OrgChart::Iterator level_order(this->root, Iterator::flags::by_level_order);
+    return level_order;
 }
 
-OrgChart::Iterator OrgChart::end_level_order() const{
-    OrgChart::Iterator check(nullptr, 'l');
-    return check;
+OrgChart::Iterator OrgChart::end_level_order(){
+    OrgChart::Iterator end_order(nullptr, Iterator::flags::end);
+    return end_order;
 }
 
 OrgChart::Iterator OrgChart::begin_reverse_order() const{
-    OrgChart::Iterator check(this->root, 'r');
-    return check;
+    OrgChart::Iterator reverse_level_order(this->root, Iterator::flags::by_reverse_level_order);
+    return reverse_level_order;
 }
 
-OrgChart::Iterator OrgChart::reverse_order() const{
-    OrgChart::Iterator check(nullptr, 'r');
-    return check;
+OrgChart::Iterator OrgChart::reverse_order(){
+    OrgChart::Iterator end_order(nullptr, Iterator::flags::end);
+    return end_order;
 }
 
 OrgChart::Iterator OrgChart::begin_preorder() const{
-    OrgChart::Iterator check(this->root, 'b');
-    return check;
+    OrgChart::Iterator pre_order(this->root, Iterator::flags::by_pre_order);
+    return pre_order;
 }
 
-OrgChart::Iterator OrgChart::end_preorder() const{
-    OrgChart::Iterator check(nullptr, 'b');
-    return check;
+OrgChart::Iterator OrgChart::end_preorder(){
+    OrgChart::Iterator end_order(nullptr, Iterator::flags::end);
+    return end_order;
 }
 
 OrgChart::Iterator OrgChart::begin() const{
     return begin_level_order();
 }
-OrgChart::Iterator OrgChart::end() const{
+OrgChart::Iterator OrgChart::end(){
     return end_level_order();
 }

@@ -7,8 +7,7 @@ Node::Node(){
     this->parent = nullptr;
     this->childs = vector<Node*>();
 }
-Node::Node(const string & name){
-    this->name = name;
+Node::Node(const string & name) : name(name){
     this->parent = nullptr;
     this->childs = vector<Node*>();
 }
@@ -18,11 +17,17 @@ string& Node::get_name(){
 Node* Node::get_parent(){
     return this->parent;
 }
+string Node::get_parent_name(){
+    if (this->parent == nullptr) {
+        return "Head manager don't have a boss above";
+    }
+    return this->parent->get_name();
+}
 vector<Node*> Node::get_childs(){
     return this->childs;
 }
 void Node::set_name(string name){
-    this->name = name;
+    this->name = move(name);
 }
 void Node::set_parent(Node* parent){
     this->parent = parent;

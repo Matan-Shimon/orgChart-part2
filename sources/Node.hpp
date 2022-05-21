@@ -13,12 +13,12 @@ private:
     Node* parent;
     vector<Node*> childs;
     string name = "";
-    int tag = 0;
 public:
     Node();
     Node(const string & name);
     string& get_name();
     Node* get_parent();
+    string get_parent_name();
     vector<Node*> get_childs();
     void set_name(string name);
     void set_parent(Node* parent);
