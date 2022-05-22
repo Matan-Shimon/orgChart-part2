@@ -19,12 +19,7 @@ OrgChart::~OrgChart(){
 }
 
 OrgChart& OrgChart::add_root(string const & head_manager){
-    if (this->root != nullptr) {
-        this->root->set_name(head_manager);
-    }
-    else {
-        this->root = new Node(head_manager);
-    }
+    this->root->set_name(head_manager);
     return *this;
 }
 
@@ -84,31 +79,49 @@ ostream & ariel::operator<< (ostream& output, const OrgChart& orgChart) {
 }
 
 OrgChart::Iterator OrgChart::begin_level_order() const{
+//    if (this->root->get_name() == "") {
+//        throw invalid_argument("chart is empty!");
+//    }
     OrgChart::Iterator level_order(this->root, Iterator::flags::by_level_order);
     return level_order;
 }
 
-OrgChart::Iterator OrgChart::end_level_order(){
+OrgChart::Iterator OrgChart::end_level_order() const{
+    if (this->root->get_name() == "None") {
+        throw invalid_argument("chart is empty!");
+    }
     OrgChart::Iterator end_order(nullptr, Iterator::flags::end);
     return end_order;
 }
 
 OrgChart::Iterator OrgChart::begin_reverse_order() const{
+    if (this->root->get_name() == "None") {
+        throw invalid_argument("chart is empty!");
+    }
     OrgChart::Iterator reverse_level_order(this->root, Iterator::flags::by_reverse_level_order);
     return reverse_level_order;
 }
 
-OrgChart::Iterator OrgChart::reverse_order(){
+OrgChart::Iterator OrgChart::reverse_order() const{
+    if (this->root->get_name() == "None") {
+        throw invalid_argument("chart is empty!");
+    }
     OrgChart::Iterator end_order(nullptr, Iterator::flags::end);
     return end_order;
 }
 
 OrgChart::Iterator OrgChart::begin_preorder() const{
+    if (this->root->get_name() == "None") {
+        throw invalid_argument("chart is empty!");
+    }
     OrgChart::Iterator pre_order(this->root, Iterator::flags::by_pre_order);
     return pre_order;
 }
 
-OrgChart::Iterator OrgChart::end_preorder(){
+OrgChart::Iterator OrgChart::end_preorder() const{
+    if (this->root->get_name() == "None") {
+        throw invalid_argument("chart is empty!");
+    }
     OrgChart::Iterator end_order(nullptr, Iterator::flags::end);
     return end_order;
 }
@@ -116,6 +129,6 @@ OrgChart::Iterator OrgChart::end_preorder(){
 OrgChart::Iterator OrgChart::begin() const{
     return begin_level_order();
 }
-OrgChart::Iterator OrgChart::end(){
+OrgChart::Iterator OrgChart::end() const{
     return end_level_order();
 }

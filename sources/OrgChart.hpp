@@ -32,12 +32,10 @@ namespace ariel {
             Node* curr_node;
             vector<Node*> order;
             vector<vector<Node*>> order_by_levels;
-            int iter_size;
         public:
             enum flags{by_level_order, by_reverse_level_order, by_pre_order, end};
-            Iterator(Node* ptr = nullptr, const int & flag = Iterator::flags::by_level_order){
+            Iterator(Node* ptr, const int & flag = Iterator::flags::by_level_order){
                 this->curr_node = ptr;
-                this->iter_size = 0;
                 if (flag == 0) { // level order
                     level_order();
                 }
@@ -60,17 +58,19 @@ namespace ariel {
             }
             Iterator level_order(){
                 // BFS
+                this->order = vector<Node*>();
                 queue<Node*> queue;
                 queue.push(this->curr_node);
                 int child_index = 0;
                 int num_in_level = 1;
-                int num_of_childs = queue.front()->get_childs().size();
+                int num_of_childs = 0;
                 vector<Node*> temp;
                 while (!queue.empty()) {
                     // for regular level order
                     this->order.push_back(queue.front());
                     // for seeing the order by levels, will use that for reverse level order
                     temp.push_back(queue.front());
+                    num_of_childs += queue.front()->get_childs().size();
                     if (child_index+1 == num_in_level) {
                         this->order_by_levels.push_back(temp);
                         temp.clear();
@@ -81,11 +81,9 @@ namespace ariel {
                     else {
                         child_index++;
                     }
-
                     vector<Node*> childs = queue.front()->get_childs();
                     for (unsigned int i = 0; i < childs.size(); ++i) {
                         queue.push(childs.at(i));
-                        num_of_childs += childs.at(i)->get_childs().size();
                     }
                     queue.pop();
                 }
@@ -107,9 +105,7 @@ namespace ariel {
             }
             Iterator pre_order(){
                 // DFS
-                cout << "\n";
                 pre_order_rec();
-                cout << "\n";
                 this->curr_node = this->order.front();
                 this->order.push_back(nullptr);
                 return *this;
@@ -157,12 +153,12 @@ namespace ariel {
         };
 
         Iterator begin_level_order() const;
-        static Iterator end_level_order();
+        Iterator end_level_order() const;
         Iterator begin_reverse_order() const;
-        static Iterator reverse_order();
+        Iterator reverse_order() const;
         Iterator begin_preorder() const;
-        static Iterator end_preorder();
+        Iterator end_preorder() const;
         Iterator begin() const;
-        static Iterator end();
+        Iterator end() const;
     };
 }

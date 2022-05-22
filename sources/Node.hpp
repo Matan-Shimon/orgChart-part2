@@ -12,7 +12,7 @@ private:
 
     Node* parent;
     vector<Node*> childs;
-    string name = "";
+    string name = "None";
 public:
     Node();
     Node(const string & name);
