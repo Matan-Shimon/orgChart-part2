@@ -1,6 +1,4 @@
 #!make -f
-# This Makefile can handle any set of cpp and hpp files.
-# To use it, you should put all your cpp and hpp files in the SOURCE_PATH folder.
 
 CXX=clang++-9
 CXXVERSION=c++2a
@@ -14,10 +12,21 @@ SOURCES=$(wildcard $(SOURCE_PATH)/*.cpp)
 HEADERS=$(wildcard $(SOURCE_PATH)/*.hpp)
 OBJECTS=$(subst sources/,objects/,$(subst .cpp,.o,$(SOURCES)))
 
-run: test
+run: demo
+	./$^
 
-test: TestRunner.o StudentTest1.o StudentTest2.o StudentTest3.o $(OBJECTS)
+demo: Demo.o $(OBJECTS)
 	$(CXX) $(CXXFLAGS) $^ -o $@
+
+test: TestCounter.o Test.o $(OBJECTS)
+	$(CXX) $(CXXFLAGS) $^ -o $@
+
+tidy:
+	clang-tidy $(HEADERS) $(TIDY_FLAGS) --
+
+valgrind: demo test
+	valgrind --tool=memcheck $(VALGRIND_FLAGS) ./demo 2>&1 | { egrep "lost| at " || true; }
+	valgrind --tool=memcheck $(VALGRIND_FLAGS) ./test 2>&1 | { egrep "lost| at " || true; }
 
 %.o: %.cpp $(HEADERS)
 	$(CXX) $(CXXFLAGS) --compile $< -o $@
@@ -25,27 +34,6 @@ test: TestRunner.o StudentTest1.o StudentTest2.o StudentTest3.o $(OBJECTS)
 $(OBJECT_PATH)/%.o: $(SOURCE_PATH)/%.cpp $(HEADERS)
 	$(CXX) $(CXXFLAGS) --compile $< -o $@
 
-# Renana Rimon
-StudentTest1.cpp:  
-	curl https://raw.githubusercontent.com/renanarimon/cpp_5b_test/master/Test.cpp > $@
-
-# Shauli Taragin
-StudentTest2.cpp: 
-	curl https://raw.githubusercontent.com/ShauliTaragin/Orgchart-A/main/Test.cpp > $@
-
-# Dvir Gev
-StudentTest3.cpp: 
-	curl https://raw.githubusercontent.com/dvirGev/CPP--Ex5-par1/main/Test.cpp > $@
-
-tidy:
-	clang-tidy $(SOURCES) $(TIDY_FLAGS) --
-
-valgrind: test
-	valgrind --tool=memcheck $(VALGRIND_FLAGS) ./test 2>&1 | { egrep "lost| at " || true; }
-
-demo: Demo.o $(OBJECTS)
-	$(CXX) $(CXXFLAGS) $^ -o $@
-
 clean:
-	rm -f $(OBJECTS) *.o test* 
+	rm -f $(OBJECTS) *.o test* demo*
 	rm -f StudentTest*.cpp

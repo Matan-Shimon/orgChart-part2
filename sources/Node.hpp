@@ -14,8 +14,10 @@ private:
     vector<Node*> childs;
     string name = "None";
 public:
+    // constructors
     Node();
     Node(const string & name);
+    // simple functions
     string& get_name();
     Node* get_parent();
     string get_parent_name();
@@ -23,6 +25,4 @@ public:
     void set_name(string name);
     void set_parent(Node* parent);
     void add_child(Node* child);
-    bool operator==(Node* other_node);
-    bool operator!=(Node* other_node);
 };
