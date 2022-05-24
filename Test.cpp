@@ -19,7 +19,7 @@ TEST_CASE("Base test 1") {
             .add_sub("COO", "VP_BI");
 
     // Checking for basic operations, such as get manager
-    CHECK_NOTHROW(organization.get_manager("CEO"));
+    CHECK_THROWS(organization.get_manager("CEO"));
     CHECK_EQ(organization.get_manager("CTO")->get_name() == "CEO", true);
     CHECK_EQ(organization.get_manager("CFO")->get_name() == "CEO", true);
     CHECK_EQ(organization.get_manager("COO")->get_name() == "CEO", true);
@@ -112,4 +112,15 @@ TEST_CASE("Base test 3") {
     CHECK_NOTHROW(chart.add_sub("Shimon", "Yossi"));
     CHECK_NOTHROW(chart.add_sub("Shimon", "Yossi"));
     CHECK_NOTHROW(chart.add_sub("Yossi", "Yossi"));
+
+    // check for invalid characters
+    CHECK_THROWS(chart.add_root(""));
+    CHECK_THROWS(chart.add_sub("Shimon",""));
+
+    CHECK_THROWS(chart.add_root("\n"));
+    CHECK_THROWS(chart.add_sub("Shimon","\n"));
+
+    CHECK_THROWS(chart.add_root("\t"));
+    CHECK_THROWS(chart.add_sub("Shimon","\t"));
+
 }

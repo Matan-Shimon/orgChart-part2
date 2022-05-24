@@ -15,18 +15,24 @@ namespace ariel {
     private:
         Node* root;
     public:
-        // constructor
+        // constructors
         OrgChart();
+        OrgChart(OrgChart& chart) = default; // for tidy
+        OrgChart(OrgChart&& chart) = default; // for tidy
         // destructor
         ~OrgChart();
         // basic functions
         OrgChart& add_root(string const & head_manager_name);
         OrgChart& add_sub(string const & manager_name, string const & worker_name);
+        static void check_name_validation(string const & name);
         Node* get_manager(string const & worker_name) const;
         Node* get_worker(string const & worker_name) const;
         Node* get_root();
+        vector<vector<Node*>> get_order_by_levels() const; // (for printing and destructor)
         // cout (<<) overload
         friend ostream & operator<< (ostream& output, const OrgChart& orgChart);
+        OrgChart& operator= (OrgChart const & chart) = default; // for tidy
+        OrgChart& operator= (OrgChart && chart) = default; // for tidy
         // Inner Iterator class
         class Iterator{
         private:
@@ -60,33 +66,18 @@ namespace ariel {
             Node* get_curr_node() {
                 return this->curr_node;
             }
+            vector<Node*> get_iter_order() {
+                return this->order;
+            }
             // calculating the level order that the iterator need to compute
             Iterator level_order(){
                 // BFS
                 this->order = vector<Node*>();
                 queue<Node*> queue;
                 queue.push(this->curr_node);
-                int child_index = 0; // to know when the the level is finished
-                int num_in_level = 1; // to know the num of nodes in the level
-                int num_of_childs = 0; // to know the next leble num of nodes
-                vector<Node*> level; // for entering the nodes in the level
                 while (!queue.empty()) {
                     // for regular level order
                     this->order.push_back(queue.front());
-                    // for seeing the order by levels, I will use that for reverse level order calculation
-                    level.push_back(queue.front());
-                    num_of_childs += queue.front()->get_childs().size();
-                    // the level has been ended
-                    if (child_index+1 == num_in_level) {
-                        this->order_by_levels.push_back(level);
-                        level.clear();
-                        child_index = 0;
-                        num_in_level = num_of_childs;
-                        num_of_childs = 0;
-                    }
-                    else { // the level has not ended yet
-                        child_index++;
-                    }
                     // for regular level order
                     vector<Node*> childs = queue.front()->get_childs();
                     for (unsigned int i = 0; i < childs.size(); ++i) {
@@ -100,14 +91,20 @@ namespace ariel {
             // calculating the reverse level order that the iterator need to compute
             Iterator reverse_level_order(){
                 // REVERSE BFS
-                Iterator level_iter = level_order(); // for getting the order by levels
-                this->order = vector<Node*>();
-                for (int i = level_iter.order_by_levels.size()-1; i >= 0; i--) {
-                    for (unsigned int j = 0; j < level_iter.order_by_levels.at(unsigned (i)).size(); ++j) {
-                        this->order.push_back(level_iter.order_by_levels.at(unsigned (i)).at(j));
+                vector<Node*> vec_for_rev;
+                vec_for_rev.push_back(this->curr_node);
+                int num_of_nodes = vec_for_rev.size();
+                for (unsigned int i = 0; i < num_of_nodes; ++i) {
+                    int num_of_childs = vec_for_rev.at(i)->get_childs().size();
+                    for (int j = num_of_childs-1; j >= 0; --j) {
+                        vec_for_rev.push_back(vec_for_rev.at(i)->get_childs().at(unsigned (j)));
                     }
+                    num_of_nodes = vec_for_rev.size();
                 }
-                this->curr_node = this->order.front();
+                for (unsigned int i = 0; i < vec_for_rev.size(); ++i) {
+                    this->order.push_back(vec_for_rev.at(unsigned (vec_for_rev.size()-1-i)));
+                }
+                this->curr_node = this->order.at(0);
                 this->order.push_back(nullptr);
                 return *this;
             }
@@ -159,13 +156,13 @@ namespace ariel {
             /*
              * overload != operator
              */
-            bool operator!=(Iterator other_iter) const {
+            bool operator!=(Iterator const & other_iter) const {
                 return this->curr_node != other_iter.curr_node;
             }
             /*
              * overload == operator
              */
-            bool operator==(Iterator other_iter) const {
+            bool operator==(Iterator const & other_iter) const {
                 return !(*this != other_iter);
             }
             /*

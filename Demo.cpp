@@ -23,7 +23,8 @@ int main() {
             .add_sub("CTO", "VP_SW") // Now the VP Software is subordinate to the CTO
             .add_sub("COO", "VP_BI");      // Now the VP_BI is subordinate to the COO
 
-    cout << organization << endl; /* Prints the org chart in a reasonable format. For example:
+    {
+        cout << organization << endl; /* Prints the org chart in a reasonable format. For example:
        CEO
        |--------|--------|
        CTO      CFO      COO
@@ -36,9 +37,8 @@ int main() {
         cout << (*it) << " " ;
     } // prints: CEO CTO CFO COO VP_SW VP_BI
     cout << endl;
-    for (auto it = organization.begin_reverse_order(); it != organization.reverse_order(); ++it)
-    {
-        cout << (*it) << " " ;
+        for (auto it = organization.begin_reverse_order(); it != organization.reverse_order(); ++it)
+            cout << (*it) << " " ;
     } // prints: VP_SW VP_BI CTO CFO COO CEO
     cout << endl;
     for (auto it=organization.begin_preorder(); it!=organization.end_preorder(); ++it) {
@@ -56,4 +56,5 @@ int main() {
     {
         cout << it->size() << " " ;
     } // prints: 3 3 3 3 5 5
+    cout << endl;
 }
