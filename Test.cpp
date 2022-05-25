@@ -117,10 +117,24 @@ TEST_CASE("Base test 3") {
     CHECK_THROWS(chart.add_root(""));
     CHECK_THROWS(chart.add_sub("Shimon",""));
 
+    CHECK_THROWS(chart.add_root(" "));
+    CHECK_THROWS(chart.add_sub("Shimon"," "));
+
+    CHECK_THROWS(chart.add_root("   "));
+    CHECK_THROWS(chart.add_sub("Shimon","   "));
+
     CHECK_THROWS(chart.add_root("\n"));
     CHECK_THROWS(chart.add_sub("Shimon","\n"));
 
     CHECK_THROWS(chart.add_root("\t"));
     CHECK_THROWS(chart.add_sub("Shimon","\t"));
 
+    CHECK_THROWS(chart.add_root("shi\rmon"));
+    CHECK_THROWS(chart.add_sub("Shimon","yarin\r"));
+
+    CHECK_THROWS(chart.add_root("\nshi\rmon"));
+    CHECK_THROWS(chart.add_sub("Shimon","\nyarin\r"));
+
+    CHECK_THROWS(chart.add_root("shi\rmon\t"));
+    CHECK_THROWS(chart.add_sub("Shimon","y\trin\r"));
 }

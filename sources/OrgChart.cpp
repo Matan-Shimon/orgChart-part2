@@ -51,6 +51,7 @@ void OrgChart::check_name_validation(string const & name){
     if (name.empty()) {
         throw invalid_argument("Invalid name!");
     }
+    bool only_space = true;
     for (unsigned int i = 0; i < name.size(); ++i) {
         char ch = name.at(i);
         if (ch < '!' || ch > '~') {
@@ -58,6 +59,12 @@ void OrgChart::check_name_validation(string const & name){
                 throw invalid_argument("Invalid name!");
             }
         }
+        else {
+            only_space = false;
+        }
+    }
+    if (only_space) {
+        throw invalid_argument("Invalid name!");
     }
 }
 /*

@@ -18,7 +18,7 @@ struct ReporterGrader: public ConsoleReporter {
 };
 
 REGISTER_REPORTER("grader", /*priority=*/1, ReporterGrader);
-
+//
 int main(int argc, char** argv) {
     Context context;
     context.addFilter("reporters", "grader");

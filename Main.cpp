@@ -11,6 +11,7 @@ int main() {
     string manager_name;
     string sub_name;
     while (num != -1) {
+        cout << "\n" << endl;
         cout << "Please choose action:" << endl;
         cout << "1: set organization root" << endl;
         cout << "2: add subordinate" << endl;
@@ -22,12 +23,14 @@ int main() {
         cin >> num;
         switch (num) {
             case 1:
+                cout <<  endl;
                 cout << "Please enter a name to the new head manager: ";
                 cin >> head_manager_name;
                 cout << endl;
                 orgChart.add_root(head_manager_name);
                 break;
             case 2:
+                cout <<  endl;
                 cout << "Please enter the new worker name: ";
                 cin >> sub_name;
                 cout << endl;
@@ -37,6 +40,7 @@ int main() {
                 orgChart.add_sub(manager_name, sub_name);
                 break;
             case 3:
+                cout <<  endl;
                 cout << "Organization workers by level order:" << endl;
                 for (auto iter = orgChart.begin_level_order(); iter != orgChart.end_level_order(); ++iter) {
                     cout << (*iter) << " ";
@@ -44,6 +48,7 @@ int main() {
                 cout <<  endl;
                 break;
             case 4:
+                cout <<  endl;
                 cout << "Organization workers by reverse level order:" << endl;
                 for (auto iter = orgChart.begin_reverse_order(); iter != orgChart.reverse_order(); ++iter) {
                     cout << (*iter) << " ";
@@ -51,6 +56,7 @@ int main() {
                 cout <<  endl;
                 break;
             case 5:
+                cout <<  endl;
                 cout << "Organization workers by pre order:" << endl;
                 for (auto iter = orgChart.begin_preorder(); iter != orgChart.end_preorder(); ++iter) {
                     cout << (*iter) << " ";
@@ -58,10 +64,12 @@ int main() {
                 cout <<  endl;
                 break;
             case 6:
+                cout <<  endl;
                 cout << "Organization chart:\n\n";
                 cout << orgChart << endl;
                 break;
             case -1:
+                cout <<  endl;
                 cout << "Thank's for using Matan's organization chart.\nHave a great day!" << endl;
                 break;
             default:
